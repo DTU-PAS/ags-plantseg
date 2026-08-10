@@ -1,61 +1,474 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Project page for Scale Matters: Adaptive Granularity Selection for Cross-Species 3D Plant Organ Segmentation.">
-  <title>Scale Matters — AGS-PlantSeg</title>
-  <style>
-    :root { color-scheme: light; }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
-      color: #202124;
-      background: #fff;
-    }
-    main {
-      width: min(960px, calc(100% - 40px));
-      margin: 0 auto;
-      padding: 72px 0 80px;
-      text-align: center;
-    }
-    h1 {
-      margin: 0 auto 18px;
-      max-width: 900px;
-      font-size: clamp(2rem, 5vw, 3.5rem);
-      line-height: 1.12;
-      font-weight: 700;
-      letter-spacing: -0.025em;
-    }
-    .status {
-      margin: 0 0 48px;
-      font-size: 1.15rem;
-      color: #666;
-    }
-    figure { margin: 0; }
-    img {
-      display: block;
-      width: 100%;
-      height: auto;
-      object-fit: contain;
-    }
-    footer {
-      margin-top: 52px;
-      font-size: 0.95rem;
-      color: #777;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Project page for Scale Matters: Adaptive Granularity Selection for Cross-Species 3D Plant Organ Segmentation.">
+<title>Scale Matters — AGS-PlantSeg</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+  :root{
+    --paper: #ffffff;
+    --panel: #f4f5f1;
+    --ink: #1a1a16;
+    --ink-dim: #57584e;
+    --stem: #3d6690;
+    --stem-deep: #22415e;
+    --leaf: #c1652f;
+    --rule: rgba(26,26,22,0.10);
+    --maxw: 980px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    font-size:16px;
+    line-height:1.7;
+  }
+  h1,h2,h3{
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    margin:0 0 0.3em;
+    letter-spacing:-0.01em;
+    line-height:1.15;
+  }
+  .mono{font-family:'IBM Plex Mono',monospace;}
+  a{color:var(--stem-deep);}
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:0 28px;}
+
+  body, .wrap, p, .authors, .institutes, .tagline, figcaption, .abstract-box, .contrib-list, .placeholder{
+    text-align:center;
+  }
+
+  .topbar{
+    position:sticky; top:0; z-index:50;
+    background:rgba(255,255,255,0.92);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--rule);
+  }
+  .topbar .wrap{
+    display:flex; align-items:center; justify-content:space-between;
+    padding-top:14px; padding-bottom:14px;
+    text-align:left;
+  }
+  .brand{font-family:'IBM Plex Mono',monospace; font-size:13px; letter-spacing:0.06em; color:var(--leaf); text-transform:uppercase;}
+  .topnav a{
+    color:var(--ink-dim); text-decoration:none; font-size:13px;
+    margin-left:22px; font-family:'IBM Plex Mono',monospace;
+    letter-spacing:0.02em;
+    border-bottom:1px solid transparent;
+    padding-bottom:2px;
+  }
+  .topnav a:hover{color:var(--stem-deep); border-bottom-color:var(--stem-deep);}
+
+  .hero{
+    padding:88px 0 56px;
+    position:relative;
+    overflow:hidden;
+  }
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12.5px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--stem-deep);
+    margin-bottom:18px;
+  }
+  .hero h1{
+    font-size:clamp(2.1rem, 4.4vw, 3.4rem);
+    line-height:1.15;
+    color:var(--ink);
+    max-width:850px;
+    margin-left:auto; margin-right:auto;
+  }
+  .hero h1 em{
+    font-style:normal;
+    color:var(--stem-deep);
+  }
+  .hero .tagline{
+    max-width:640px;
+    font-size:1.08rem;
+    color:var(--ink-dim);
+    margin:14px auto 0;
+  }
+  .authors{
+    margin-top:30px;
+    font-size:15px;
+    color:var(--ink);
+  }
+  .authors a{
+    color:var(--ink);
+    text-decoration:none;
+    border-bottom:1px solid var(--rule);
+    padding-bottom:1px;
+    transition:color .15s ease, border-color .15s ease;
+  }
+  .authors a:hover{
+    color:var(--stem-deep);
+    border-bottom-color:var(--stem-deep);
+  }
+  .authors .sup{ color:var(--leaf); font-size:11px; vertical-align:super; margin-left:1px;}
+  .institutes{
+    margin-top:8px;
+    font-size:13.5px;
+    color:var(--ink-dim);
+  }
+  .venue-tag{
+    display:inline-block;
+    margin-top:20px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.08em;
+    color:var(--paper);
+    background:var(--stem-deep);
+    padding:5px 12px;
+    border-radius:2px;
+    text-transform:uppercase;
+  }
+  .cta-row{
+    margin-top:34px;
+    display:flex; flex-wrap:wrap; gap:12px;
+    justify-content:center;
+  }
+  .btn{
+    display:inline-flex; align-items:center; gap:8px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:13.5px;
+    text-decoration:none;
+    padding:11px 18px;
+    border-radius:3px;
+    border:1px solid var(--rule);
+    color:var(--ink);
+    background:var(--panel);
+    transition:all .15s ease;
+  }
+  .btn:hover{ border-color:var(--stem-deep); color:var(--stem-deep); transform:translateY(-1px);}
+  .btn.primary{
+    background:var(--stem-deep);
+    border-color:var(--stem-deep);
+    color:var(--paper);
+    font-weight:500;
+  }
+  .btn.primary:hover{
+    background:var(--stem);
+    border-color:var(--stem);
+    color:var(--paper);
+  }
+
+  section{ padding:64px 0; border-top:1px solid var(--rule);}
+  .section-head{
+    display:flex; align-items:baseline; gap:14px;
+    margin-bottom:28px;
+    justify-content:center;
+  }
+  section h2{ font-size:1.6rem; color:var(--ink);}
+
+  .lede{
+    max-width:760px;
+    margin:0 auto;
+    color:var(--ink-dim);
+  }
+
+  .pipeline{
+    display:flex; align-items:stretch; justify-content:center;
+    gap:14px; flex-wrap:wrap;
+    max-width:820px;
+    margin:34px auto 0;
+  }
+  .pipe-step{
+    flex:1 1 200px;
+    background:var(--panel);
+    border-radius:3px;
+    padding:20px 18px;
+    text-align:center;
+  }
+  .pipe-num{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    color:var(--leaf);
+    letter-spacing:0.06em;
+    margin-bottom:8px;
+  }
+  .pipe-title{
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:1.05rem;
+    color:var(--ink);
+    margin-bottom:6px;
+  }
+  .pipe-text{
+    font-size:13px;
+    color:var(--ink-dim);
+    line-height:1.55;
+  }
+  .pipe-arrow{
+    display:flex; align-items:center; justify-content:center;
+    color:var(--stem-deep);
+    font-size:1.3rem;
+    flex:0 0 auto;
+  }
+  @media (max-width:700px){
+    .pipeline{ flex-direction:column; }
+    .pipe-arrow{ transform:rotate(90deg); }
+  }
+
+  .abstract-box{
+    background:var(--panel);
+    border:1px solid var(--rule);
+    border-top:3px solid var(--stem-deep);
+    padding:26px 32px;
+    border-radius:2px;
+    font-size:1rem;
+    color:var(--ink-dim);
+    max-width:820px;
+    margin:0 auto;
+  }
+  .abstract-box p{ margin:0;}
+
+  /* clearly-marked placeholder content — replace before publishing */
+  .placeholder{
+    color:var(--ink-dim);
+    font-style:italic;
+    font-size:0.95em;
+  }
+  .placeholder::before, .placeholder::after{ content:"— "; }
+  .placeholder::after{ content:" —"; }
+
+  figure{ margin:0 auto; max-width:820px; }
+  figure img{
+    width:100%; display:block; border-radius:3px;
+    background:var(--panel);
+  }
+  figcaption{
+    margin-top:12px;
+    font-size:13.5px;
+    color:var(--ink-dim);
+    max-width:700px;
+    margin-left:auto; margin-right:auto;
+  }
+
+  .contrib-list{
+    list-style:none; margin:0 auto; padding:0;
+    display:grid; gap:16px;
+    max-width:760px;
+  }
+  .contrib-list li{
+    display:grid; grid-template-columns:34px 1fr; gap:14px;
+    padding:18px 0;
+    border-bottom:1px solid var(--rule);
+    text-align:left;
+  }
+  .contrib-list li:last-child{ border-bottom:none; }
+  .contrib-list .idx{
+    font-family:'IBM Plex Mono',monospace;
+    color:var(--leaf); font-size:13px; padding-top:2px;
+  }
+  .contrib-list strong{ color:var(--ink); }
+  .contrib-list span{ color:var(--ink-dim); font-size:14.5px; }
+
+  .bibtex{
+    background:var(--panel);
+    border:1px solid var(--rule);
+    border-radius:3px;
+    padding:20px 22px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12.5px;
+    color:var(--ink-dim);
+    overflow-x:auto;
+    white-space:pre;
+    line-height:1.55;
+    position:relative;
+    max-width:820px;
+    margin:20px auto 0;
+    text-align:left;
+  }
+  .copy-btn{
+    position:absolute; top:14px; right:14px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px; color:var(--ink-dim);
+    background:var(--paper); border:1px solid var(--rule);
+    padding:6px 10px; border-radius:3px; cursor:pointer;
+  }
+  .copy-btn:hover{ color:var(--stem-deep); border-color:var(--stem-deep); }
+
+  footer{
+    padding:40px 0 60px;
+    border-top:1px solid var(--rule);
+    font-size:13px; color:var(--ink-dim);
+    font-family:'IBM Plex Mono',monospace;
+    text-align:center;
+  }
+
+  ::selection{ background:var(--stem-deep); color:var(--paper); }
+</style>
 </head>
 <body>
-  <main>
-    <h1>Scale Matters: Adaptive Granularity Selection for Cross-Species 3D Plant Organ Segmentation</h1>
-    <p class="status">Project page coming soon.</p>
 
-    <figure>
-      <img src="assets/qualitative_generalization.png"
-           alt="Qualitative 3D plant organ segmentation results on unseen plant datasets">
+<div class="topbar">
+  <div class="wrap">
+    <div class="brand">AGS-PlantSeg</div>
+    <nav class="topnav">
+      <a href="#abstract">Abstract</a>
+      <a href="#overview">Overview</a>
+      <a href="#contrib">Contributions</a>
+      <a href="#method">Method</a>
+      <a href="#results">Results</a>
+      <a href="#bibtex">Cite</a>
+    </nav>
+  </div>
+</div>
+
+<header class="hero">
+  <div class="wrap">
+    <h1>Scale Matters: <em>Adaptive Granularity Selection</em> for Cross-Species 3D Plant Organ Segmentation</h1>
+
+    <div class="authors">
+      <span class="placeholder">add author names &amp; links here</span>
+    </div>
+    <div class="institutes">
+      <span class="placeholder">add affiliations here</span>
+    </div>
+
+    <span class="venue-tag">Venue &amp; year — TBD</span>
+
+    <div class="cta-row">
+      <a class="btn" href="#" target="_blank">
+        <i class="fa-solid fa-file-pdf"></i> Paper
+      </a>
+      <a class="btn" href="#" target="_blank">
+        <i class="fa-solid fa-book-open"></i> arXiv
+      </a>
+      <a class="btn" href="#" target="_blank">
+        <i class="fa-brands fa-github"></i> Code
+      </a>
+      <a class="btn" href="#bibtex">
+        <i class="fa-solid fa-quote-right"></i> BibTeX
+      </a>
+    </div>
+  </div>
+</header>
+
+<section id="abstract">
+  <div class="wrap">
+    <div class="section-head"><h2>Abstract</h2></div>
+    <div class="abstract-box">
+      <p class="placeholder">add abstract paragraph here</p>
+    </div>
+  </div>
+</section>
+
+<section id="overview">
+  <div class="wrap">
+    <div class="section-head"><h2>Overview</h2></div>
+    <p class="lede">3D plant organ segmentation must generalize across species, growth stages, and highly heterogeneous plant structures, from sparse young seedlings to dense, self-occluding canopies. A single fixed spatial scale rarely suits all of these cases at once. We study <strong style="color:var(--ink)">adaptive granularity selection</strong>, choosing the operating scale per plant or per region rather than fixing it in advance, and show its effect on segmenting points into organs such as stem and leaf.</p>
+
+    <figure style="margin-top:34px;">
+      <img src="assets/scale_matters.png" alt="Effect of granularity/scale selection on leaf and stem point segmentation for Ribes and Rose plants">
+      <figcaption>Effect of granularity (scale) on per-point leaf/stem segmentation. Ribes 07 is best segmented at a coarse scale (Scale=7), while Rose 06 is best segmented at a fine scale (Scale=1) — a fixed scale cannot suit both.</figcaption>
     </figure>
-  </main>
+
+    <div class="pipeline">
+      <div class="pipe-step">
+        <div class="pipe-num">1</div>
+        <div class="pipe-title">Multi-scale features</div>
+        <div class="pipe-text placeholder">describe feature extraction step</div>
+      </div>
+      <div class="pipe-arrow">&rarr;</div>
+      <div class="pipe-step">
+        <div class="pipe-num">2</div>
+        <div class="pipe-title">Adaptive selection</div>
+        <div class="pipe-text placeholder">describe granularity selection step</div>
+      </div>
+      <div class="pipe-arrow">&rarr;</div>
+      <div class="pipe-step">
+        <div class="pipe-num">3</div>
+        <div class="pipe-title">Organ segmentation</div>
+        <div class="pipe-text placeholder">describe segmentation output</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="contrib">
+  <div class="wrap">
+    <div class="section-head"><h2>Contributions</h2></div>
+    <ul class="contrib-list">
+      <li>
+        <span class="idx">01</span>
+        <div><strong>Adaptive granularity selection.</strong> <span>Rather than fixing a single spatial scale, we select the operating granularity per plant/region, as different species and structures are best segmented at different scales (see Ribes vs. Rose above).</span></div>
+      </li>
+      <li>
+        <span class="idx">02</span>
+        <div><strong>Cross-species evaluation.</strong> <span>We evaluate generalization across species and datasets — tomato (Pheno4D, Crops3D) and potato (Crops3D) — segmenting point clouds into stem and leaf.</span></div>
+      </li>
+      <li>
+        <span class="idx">03</span>
+        <div class="placeholder">add further contributions here</div>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<section id="method">
+  <div class="wrap">
+    <div class="section-head"><h2>Method</h2></div>
+    <p class="lede placeholder">add method description here</p>
+  </div>
+</section>
+
+<section id="results">
+  <div class="wrap">
+    <div class="section-head"><h2>Results</h2></div>
+    <p class="lede">Qualitative results across three cross-species point cloud datasets. In each case the model predicts a per-point organ label (stem vs. leaf) that closely matches the ground-truth annotation, despite differing plant structure and point density.</p>
+
+    <figure style="margin-top:34px;">
+      <img src="assets/qualitative_generalization.png" alt="Qualitative 3D plant organ segmentation results on tomato (Pheno4D, Crops3D) and potato (Crops3D) point clouds, compared against ground truth">
+      <figcaption>Point cloud, prediction, and ground truth for tomato (Pheno4D), tomato (Crops3D), and potato (Crops3D). Blue = stem, orange = leaf.</figcaption>
+    </figure>
+
+    <p class="lede placeholder" style="margin-top:34px;">add quantitative results / table here</p>
+  </div>
+</section>
+
+<section id="bibtex">
+  <div class="wrap">
+    <div class="section-head"><h2>BibTeX</h2></div>
+    <p class="lede">If you find this work useful, please cite:</p>
+
+    <div class="bibtex" id="bibtexBlock">@inproceedings{agsplantseg2026,
+      title     = {Scale Matters: Adaptive Granularity Selection for Cross-Species 3D Plant Organ Segmentation},
+      author    = {TBD},
+      booktitle = {TBD},
+      year      = {2026}
+      }
+    </div>
+    <button class="copy-btn" onclick="copyBib()">Copy</button>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    Project page for Scale Matters (AGS-PlantSeg)
+  </div>
+</footer>
+
+<script>
+  function copyBib(){
+    const text = document.getElementById('bibtexBlock').innerText;
+    navigator.clipboard.writeText(text).then(()=>{
+      const btn = document.querySelector('.copy-btn');
+      const old = btn.innerText;
+      btn.innerText = 'Copied';
+      setTimeout(()=>btn.innerText = old, 1400);
+    });
+  }
+</script>
+
 </body>
 </html>
