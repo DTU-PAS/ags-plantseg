@@ -42,7 +42,7 @@
   a{color:var(--stem-deep);}
   .wrap{max-width:var(--maxw); margin:0 auto; padding:0 28px;}
 
-  body, .wrap, p, .authors, .institutes, .tagline, figcaption, .abstract-box, .contrib-list, .placeholder{
+  body, .wrap, p, .authors, .institutes, .tagline, figcaption, .abstract-box, .contrib-list{
     text-align:center;
   }
 
@@ -231,14 +231,34 @@
   }
   .abstract-box p{ margin:0;}
 
-  /* clearly-marked placeholder content — replace before publishing */
-  .placeholder{
-    color:var(--ink-dim);
-    font-style:italic;
-    font-size:0.95em;
+  .stat-row{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(150px,1fr));
+    gap:1px;
+    background:var(--rule);
+    border:1px solid var(--rule);
+    border-radius:3px;
+    overflow:hidden;
+    margin:34px auto 0;
+    max-width:820px;
   }
-  .placeholder::before, .placeholder::after{ content:"— "; }
-  .placeholder::after{ content:" —"; }
+  .stat{
+    background:var(--paper);
+    padding:22px 18px;
+  }
+  .stat .num{
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:1.9rem;
+    color:var(--stem-deep);
+  }
+  .stat .label{
+    margin-top:6px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11.5px;
+    color:var(--ink-dim);
+    letter-spacing:0.02em;
+  }
 
   figure{ margin:0 auto; max-width:820px; }
   figure img{
@@ -317,7 +337,6 @@
       <a href="#abstract">Abstract</a>
       <a href="#overview">Overview</a>
       <a href="#contrib">Contributions</a>
-      <a href="#method">Method</a>
       <a href="#results">Results</a>
       <a href="#bibtex">Cite</a>
     </nav>
@@ -329,28 +348,27 @@
     <h1>Scale Matters: <em>Adaptive Granularity Selection</em> for Cross-Species 3D Plant Organ Segmentation</h1>
 
     <div class="authors">
-      <span class="placeholder">add author names &amp; links here</span>
+      <a href="https://scholar.google.com/citations?user=HnjzYD0AAAAJ&hl=en" target="_blank" rel="noopener">Carla Salazar</a> &nbsp;·&nbsp;
+      <a href="https://scholar.google.com/citations?user=YAx9230AAAAJ&hl=en" target="_blank" rel="noopener">Lazaros Nalpantidis</a>
     </div>
     <div class="institutes">
-      <span class="placeholder">add affiliations here</span>
+      Technical University of Denmark (DTU)
     </div>
 
-    <span class="venue-tag">Venue &amp; year — TBD</span>
+    <span class="venue-tag">CVPPA Workshop @ ECCV 2026</span>
 
     <div class="cta-row">
       <a class="btn" href="#" target="_blank">
         <i class="fa-solid fa-file-pdf"></i> Paper
       </a>
-      <a class="btn" href="#" target="_blank">
-        <i class="fa-solid fa-book-open"></i> arXiv
-      </a>
-      <a class="btn" href="#" target="_blank">
+      <a class="btn" href="https://github.com/dtu-pas/ags-plantseg" target="_blank">
         <i class="fa-brands fa-github"></i> Code
       </a>
       <a class="btn" href="#bibtex">
         <i class="fa-solid fa-quote-right"></i> BibTeX
       </a>
     </div>
+    <p class="mono" style="margin-top:18px; font-size:12.5px; color:var(--ink-dim);">Code is being finalized and will be released soon - star/watch the repo to be notified.</p>
   </div>
 </header>
 
@@ -358,7 +376,13 @@
   <div class="wrap">
     <div class="section-head"><h2>Abstract</h2></div>
     <div class="abstract-box">
-      <p class="placeholder">add abstract paragraph here</p>
+      <p style="text-align:justify;">We introduce <strong style="color:var(--ink)">AGS-PlantSeg</strong>, a few-shot 3D plant organ segmentation method built on a frozen <strong style="color:var(--ink)">Utonia</strong> encoder with a lightweight two-layer MLP head. Rather than committing to a single fixed granularity, our <strong style="color:var(--ink)">Adaptive Granularity Selection (AGS)</strong> module adapts per plant: at training time it selects three granularity levels &mdash; one maximizing class discriminability and one boundary-aware level per class &mdash; using prototype-based measures of inter-class separation, intra-class compactness, and class-wise boundary consistency; at inference it selects three levels by similarity to stored training prototypes and combines their predictions via confidence-weighted aggregation. Trained only on PLANesT-3D and evaluated for cross-species, cross-dataset generalization on Pheno4D and Crops3D, AGS-PlantSeg reaches <strong style="color:var(--ink)">88.6%</strong> average mIoU, outperforming the best fixed-granularity baseline (86.4%) by 2.2 mIoU.</p>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat"><div class="num">88.6%</div><div class="label">avg. mIoU, AGS-PlantSeg (few-shot)</div></div>
+      <div class="stat"><div class="num">86.4%</div><div class="label">best fixed-granularity baseline</div></div>
+      <div class="stat"><div class="num">+2.2</div><div class="label">mIoU improvement</div></div>
     </div>
   </div>
 </section>
@@ -366,30 +390,30 @@
 <section id="overview">
   <div class="wrap">
     <div class="section-head"><h2>Overview</h2></div>
-    <p class="lede">3D plant organ segmentation must generalize across species, growth stages, and highly heterogeneous plant structures, from sparse young seedlings to dense, self-occluding canopies. A single fixed spatial scale rarely suits all of these cases at once. We study <strong style="color:var(--ink)">adaptive granularity selection</strong>, choosing the operating scale per plant or per region rather than fixing it in advance, and show its effect on segmenting points into organs such as stem and leaf.</p>
+    <p class="lede">A single fixed spatial granularity rarely suits every plant. <strong style="color:var(--ink)">AGS-PlantSeg</strong> adapts granularity per plant instead, trained only on <strong style="color:var(--ink)">PLANesT-3D</strong> and evaluated for cross-species, cross-dataset generalization on Pheno4D and Crops3D.</p>
 
     <figure style="margin-top:34px;">
       <img src="assets/scale_matters.png" alt="Effect of granularity/scale selection on leaf and stem point segmentation for Ribes and Rose plants">
-      <figcaption>Effect of granularity (scale) on per-point leaf/stem segmentation. Ribes 07 is best segmented at a coarse scale (Scale=7), while Rose 06 is best segmented at a fine scale (Scale=1) — a fixed scale cannot suit both.</figcaption>
+      <figcaption>Effect of granularity on per-point leaf/stem segmentation. Ribes 07 prefers the finer granularity (Scale=7); Rose 06 prefers the coarser granularity (Scale=1) &mdash; no single fixed scale suits both.</figcaption>
     </figure>
 
     <div class="pipeline">
       <div class="pipe-step">
         <div class="pipe-num">1</div>
-        <div class="pipe-title">Multi-scale features</div>
-        <div class="pipe-text placeholder">describe feature extraction step</div>
+        <div class="pipe-title">Frozen Utonia features</div>
+        <div class="pipe-text">Point features come from a frozen Utonia encoder at multiple granularities; only a lightweight two-layer MLP head is trained.</div>
       </div>
       <div class="pipe-arrow">&rarr;</div>
       <div class="pipe-step">
         <div class="pipe-num">2</div>
-        <div class="pipe-title">Adaptive selection</div>
-        <div class="pipe-text placeholder">describe granularity selection step</div>
+        <div class="pipe-title">Adaptive selection (AGS)</div>
+        <div class="pipe-text">Per plant, pick 3 granularity levels: training uses prototype scores (inter-class separation, intra-class compactness, boundary consistency); inference uses similarity to stored prototypes.</div>
       </div>
       <div class="pipe-arrow">&rarr;</div>
       <div class="pipe-step">
         <div class="pipe-num">3</div>
-        <div class="pipe-title">Organ segmentation</div>
-        <div class="pipe-text placeholder">describe segmentation output</div>
+        <div class="pipe-title">Confidence-weighted aggregation</div>
+        <div class="pipe-text">Combine the 3 levels' predictions into the final per-point organ label (e.g. stem, leaf).</div>
       </div>
     </div>
   </div>
@@ -401,38 +425,30 @@
     <ul class="contrib-list">
       <li>
         <span class="idx">01</span>
-        <div><strong>Adaptive granularity selection.</strong> <span>Rather than fixing a single spatial scale, we select the operating granularity per plant/region, as different species and structures are best segmented at different scales (see Ribes vs. Rose above).</span></div>
+        <div><strong>Adaptive Granularity Selection (AGS).</strong> <span>Per plant, not per region: at training time AGS selects three granularity levels (one discriminability-optimal level, plus one boundary-aware level per class) via prototype scores of inter-class separation, intra-class compactness, and class-wise boundary consistency; at inference it selects three levels by prototype similarity and combines them via confidence-weighted aggregation.</span></div>
       </li>
       <li>
         <span class="idx">02</span>
-        <div><strong>Cross-species evaluation.</strong> <span>We evaluate generalization across species and datasets — tomato (Pheno4D, Crops3D) and potato (Crops3D) — segmenting point clouds into stem and leaf.</span></div>
+        <div><strong>Few-shot, frozen-feature setting.</strong> <span>AGS-PlantSeg builds on a frozen Utonia encoder with only a lightweight two-layer MLP head trained, no backbone fine-tuning.</span></div>
       </li>
       <li>
         <span class="idx">03</span>
-        <div class="placeholder">add further contributions here</div>
+        <div><strong>Cross-species, cross-dataset generalization.</strong> <span>Trained only on PLANesT-3D and evaluated on held-out Pheno4D and Crops3D (tomato, potato), AGS-PlantSeg reaches 88.6% avg. mIoU vs. 86.4% for the best fixed-granularity baseline.</span></div>
       </li>
     </ul>
   </div>
 </section>
 
-<section id="method">
-  <div class="wrap">
-    <div class="section-head"><h2>Method</h2></div>
-    <p class="lede placeholder">add method description here</p>
-  </div>
-</section>
 
 <section id="results">
   <div class="wrap">
     <div class="section-head"><h2>Results</h2></div>
-    <p class="lede">Qualitative results across three cross-species point cloud datasets. In each case the model predicts a per-point organ label (stem vs. leaf) that closely matches the ground-truth annotation, despite differing plant structure and point density.</p>
+    <p class="lede">Qualitative results on the held-out cross-species datasets &mdash; never seen during training. Predicted per-point organ labels closely match ground truth despite differing plant structure and point density across species.</p>
 
     <figure style="margin-top:34px;">
       <img src="assets/qualitative_generalization.png" alt="Qualitative 3D plant organ segmentation results on tomato (Pheno4D, Crops3D) and potato (Crops3D) point clouds, compared against ground truth">
       <figcaption>Point cloud, prediction, and ground truth for tomato (Pheno4D), tomato (Crops3D), and potato (Crops3D). Blue = stem, orange = leaf.</figcaption>
     </figure>
-
-    <p class="lede placeholder" style="margin-top:34px;">add quantitative results / table here</p>
   </div>
 </section>
 
@@ -441,10 +457,10 @@
     <div class="section-head"><h2>BibTeX</h2></div>
     <p class="lede">If you find this work useful, please cite:</p>
 
-    <div class="bibtex" id="bibtexBlock">@inproceedings{agsplantseg2026,
+    <div class="bibtex" id="bibtexBlock">@inproceedings{salazar2026scalematters,
       title     = {Scale Matters: Adaptive Granularity Selection for Cross-Species 3D Plant Organ Segmentation},
-      author    = {TBD},
-      booktitle = {TBD},
+      author    = {Salazar, Carla and Nalpantidis, Lazaros},
+      booktitle = {Proceedings of the European Conference on Computer Vision (ECCV) Workshops},
       year      = {2026}
       }
     </div>
