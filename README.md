@@ -22,7 +22,7 @@ Cross-Species 3D Plant Organ Segmentation"* (CVPPA Workshop @ ECCV 2026), introd
 features with an **Adaptive Granularity Selection (AGS)** module. Instead of a single fixed
 spatial granularity, AGS selects per-plant feature scales during training and inference using
 prototype-based measures of class separation, compactness, and boundary consistency, improving
-cross-species generalization and outperforming the best fixed-granularity baseline by 2.2 mIoU.
+cross-species generalization and outperforming the best fixed-granularity baseline by 2.5 mIoU.
 
 > **Code is being finalized and will be released soon.** Star/watch this repo to be notified.
 
