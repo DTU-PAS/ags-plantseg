@@ -376,7 +376,13 @@
   <div class="wrap">
     <div class="section-head"><h2>Abstract</h2></div>
     <div class="abstract-box">
-      <p style="text-align:justify;">We introduce <strong style="color:var(--ink)">AGS-PlantSeg</strong>, a few-shot 3D plant organ segmentation method built on a frozen <strong style="color:var(--ink)">Utonia</strong> encoder with a lightweight two-layer MLP head. Rather than committing to a single fixed granularity, our <strong style="color:var(--ink)">Adaptive Granularity Selection (AGS)</strong> module adapts per plant: at training time it selects three granularity levels &mdash; one maximizing class discriminability and one boundary-aware level per class &mdash; using prototype-based measures of inter-class separation, intra-class compactness, and class-wise boundary consistency; at inference it selects three levels by similarity to stored training prototypes and combines their predictions via confidence-weighted aggregation. Trained only on PLANesT-3D and evaluated for cross-species, cross-dataset generalization on Pheno4D and Crops3D, AGS-PlantSeg reaches <strong style="color:var(--ink)">88.6%</strong> average mIoU, outperforming the best fixed-granularity baseline (86.4%) by 2.2 mIoU.</p>
+      <p style="text-align:justify;">We introduce <strong style="color:var(--ink)">AGS-PlantSeg</strong>, a few-shot 3D plant organ segmentation method built on a frozen <strong style="color:var(--ink)">Utonia</strong> encoder with a lightweight two-layer MLP head. Rather than committing to a single fixed granularity, our <strong style="color:var(--ink)">Adaptive Granularity Selection (AGS)</strong> module adapts the representation to each plant. During training, AGS selects three granularity levels using prototype-based measures of inter-class separation, intra-class compactness, and class-wise boundary consistency: one level maximizes class discriminability, while two class-specific levels capture boundary consistency. At inference, it selects three levels based on similarity to stored training prototypes and combines their predictions through confidence-weighted aggregation. Trained only on PLANesT-3D and evaluated for cross-species, cross-dataset generalization on Pheno4D and Crops3D, AGS-PlantSeg reaches <strong style="color:var(--ink)">88.6%</strong> average mIoU, outperforming the best fixed-granularity baseline (86.4%) by 2.2 mIoU.</p>
+      <!-- TODO:
+        - Code release: finalize repo and update the "star/watch to be notified" note once published.
+        - Verify all reported numbers (88.6%, 86.4%, +2.2 mIoU) against final paper camera-ready.
+        - Add paper/arXiv link once available.
+        - Add BibTeX citation block.
+      -->
     </div>
 
     <div class="stat-row">
@@ -394,7 +400,7 @@
 
     <figure style="margin-top:34px;">
       <img src="assets/scale_matters.png" alt="Effect of granularity/scale selection on leaf and stem point segmentation for Ribes and Rose plants">
-      <figcaption>Effect of granularity on per-point leaf/stem segmentation. Ribes 07 prefers the finer granularity (Scale=7); Rose 06 prefers the coarser granularity (Scale=1) &mdash; no single fixed scale suits both.</figcaption>
+      <figcaption>Effect of granularity on per-point leaf/stem segmentation. Ribes 07 prefers the finer granularity (Scale=7); Rose 06 prefers the coarser granularity (Scale=1): no single fixed scale suits both.</figcaption>
     </figure>
 
     <div class="pipeline">
@@ -419,6 +425,18 @@
   </div>
 </section>
 
+<section id="method">
+  <div class="wrap">
+    <div class="section-head"><h2>Method</h2></div>
+    <p class="lede">AGS selects granularity levels using label prototypes, both when training the segmentation head and at inference on unseen plants.</p>
+
+    <figure style="margin-top:34px;">
+      <img src="assets/methodology.png" alt="AGS-PlantSeg method diagram: prototype computation, training-time and inference-time granularity selection, segmentation head training, and confidence-weighted prediction">
+      <figcaption>(a) Label prototypes are computed per class at a given granularity <em>g</em>. (b) At training time, the AGS module scores candidate granularities against these prototypes to pick <em>G*<sub>train</sub></em>. (c) The frozen Utonia encoder extracts features at <em>G*<sub>train</sub></em>, used to train the MLP segmentation head. (d) At inference, the AGS module selects <em>G*<sub>infer</sub></em> for the test plant by similarity to the stored prototype dictionary <em>D</em>. (e) Predictions at the selected granularities are combined via confidence-weighted aggregation into the final prediction.</figcaption>
+    </figure>
+  </div>
+</section>
+
 <section id="contrib">
   <div class="wrap">
     <div class="section-head"><h2>Contributions</h2></div>
@@ -433,7 +451,7 @@
       </li>
       <li>
         <span class="idx">03</span>
-        <div><strong>Cross-species, cross-dataset generalization.</strong> <span>Trained only on PLANesT-3D and evaluated on held-out Pheno4D and Crops3D (tomato, potato), AGS-PlantSeg reaches 88.6% avg. mIoU vs. 86.4% for the best fixed-granularity baseline.</span></div>
+        <div><strong>Cross-species, cross-dataset generalization.</strong> <span>Trained only on PLANesT-3D and evaluated on unseen Pheno4D and Crops3D (tomato, potato), AGS-PlantSeg reaches 88.6% avg. mIoU vs. 86.4% for the best fixed-granularity baseline.</span></div>
       </li>
     </ul>
   </div>
@@ -443,7 +461,7 @@
 <section id="results">
   <div class="wrap">
     <div class="section-head"><h2>Results</h2></div>
-    <p class="lede">Qualitative results on the held-out cross-species datasets &mdash; never seen during training. Predicted per-point organ labels closely match ground truth despite differing plant structure and point density across species.</p>
+    <p class="lede">Qualitative results on unseen cross-species datasets, not used during training. Predicted per-point organ labels closely match ground truth despite differing plant structure and point density across species.</p>
 
     <figure style="margin-top:34px;">
       <img src="assets/qualitative_generalization.png" alt="Qualitative 3D plant organ segmentation results on tomato (Pheno4D, Crops3D) and potato (Crops3D) point clouds, compared against ground truth">
