@@ -274,12 +274,15 @@
   }
 
   .vcompare-figure{ margin:0 auto; max-width:820px; }
-  .vcompare-figure + .vcompare-figure{ margin-top:52px; }
-  .vcompare-name{
-    font-family:'IBM Plex Mono',monospace;
-    font-size:13px; font-weight:600; letter-spacing:0.02em;
-    color:var(--ink); margin-bottom:12px;
+
+  .plant-tabs{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-bottom:18px; }
+  .plant-tab{
+    font-family:'Inter',sans-serif; font-weight:600;
+    font-size:13.5px; padding:9px 16px; border-radius:3px;
+    border:1px solid var(--rule); background:var(--paper); color:var(--ink-dim);
+    cursor:pointer;
   }
+  .plant-tab.active{ background:var(--leaf); border-color:var(--leaf); color:var(--paper); }
 
   .vcompare-toggle{ display:flex; gap:8px; justify-content:center; margin-bottom:14px; }
   .vtoggle-btn{
@@ -395,10 +398,11 @@
   <div class="wrap">
     <div class="brand">AGS-PlantSeg</div>
     <nav class="topnav">
+      <a href="#demo">Qualitative Results</a>
       <a href="#abstract">Abstract</a>
       <a href="#overview">Overview</a>
       <a href="#contrib">Contributions</a>
-      <a href="#results">Results</a>
+      <a href="#results">Quantitative Results</a>
       <a href="#bibtex">Cite</a>
     </nav>
   </div>
@@ -433,6 +437,17 @@
   </div>
 </header>
 
+<section id="demo">
+  <div class="wrap">
+    <div class="section-head"><h2>Qualitative Results</h2></div>
+
+    <div id="vcompareContainer" style="margin-top:34px;"></div>
+    <noscript>
+      <p class="vcompare-hint">Interactive comparisons require JavaScript. Video files are available in this project's <code>assets/videos/</code> folder.</p>
+    </noscript>
+  </div>
+</section>
+
 <section id="abstract">
   <div class="wrap">
     <div class="section-head"><h2>Abstract</h2></div>
@@ -462,11 +477,6 @@
     <figure style="margin-top:34px;">
       <img src="assets/scale_matters.png" alt="Effect of granularity/scale selection on leaf and stem point segmentation for Ribes and Rose plants">
       <figcaption>Effect of granularity on per-point leaf/stem segmentation. Ribes 07 prefers the finer granularity (Scale=7); Rose 06 prefers the coarser granularity (Scale=1): no single fixed scale suits both.</figcaption>
-    </figure>
-
-    <figure style="margin-top:34px;">
-      <img src="assets/scales_by_species.png" alt="Distribution of AGS-selected granularity scale per species, shown as violin plots">
-      <figcaption>Granularity selected by AGS at inference, per species. The distribution varies widely both within and across species (e.g. Crops3D potato skews toward coarser scales, PLANesT-3D ribes toward finer ones) — no fixed scale would fit all of them.</figcaption>
     </figure>
 
     <div class="pipeline">
@@ -526,20 +536,17 @@
 
 <section id="results">
   <div class="wrap">
-    <div class="section-head"><h2>Results</h2></div>
-    <p class="lede">Adaptive granularity selection outperforms every fixed-granularity choice, and the granularity it picks varies by species.</p>
+    <div class="section-head"><h2>Quantitative Results</h2></div>
 
     <figure style="margin-top:34px;">
       <img src="assets/ags_miou_by_scale.png" alt="mIoU vs. fixed granularity per species, compared against AGS-PlantSeg's adaptive selection">
-      <figcaption>mIoU per species at each fixed granularity (1&ndash;7) vs. AGS-PlantSeg's adaptive selection ("Adaptive (ours)"). No single fixed scale is best across species; the adaptive approach matches or exceeds the best fixed choice for every one.</figcaption>
+      <figcaption>Per-species mIoU across fixed granularities (1&ndash;7) vs. AGS-PlantSeg (adaptive, ours). No single fixed scale wins across species; adaptive selection matches or beats the best fixed scale for every species.</figcaption>
     </figure>
 
-    <p class="lede" style="margin-top:52px;">Qualitative results on unseen cross-species datasets, not used during training. Drag each comparison to reveal RGB, PCA features, or the predicted segmentation against ground truth.</p>
-
-    <div id="vcompareContainer" style="margin-top:34px;"></div>
-    <noscript>
-      <p class="vcompare-hint">Interactive comparisons require JavaScript. Video files are available in this project's <code>assets/videos/</code> folder.</p>
-    </noscript>
+    <figure style="margin-top:34px;">
+      <img src="assets/scales_by_species.png" alt="Distribution of AGS-selected granularity scale per species, shown as violin plots">
+      <figcaption>Distribution of the scale AGS actually selects per species, across all test plants &mdash; confirming the module adapts genuinely per species rather than converging to one scale.</figcaption>
+    </figure>
   </div>
 </section>
 
@@ -589,14 +596,15 @@
   ];
   const DRIFT_TOLERANCE = 0.15; // seconds, periodic resync threshold for looping videos
 
-  function buildVCompare(container, plant){
+  function buildVCompare(container){
     const figure = document.createElement('figure');
     figure.className = 'vcompare-figure';
 
-    const name = document.createElement('div');
-    name.className = 'vcompare-name';
-    name.textContent = plant.label;
-    figure.appendChild(name);
+    const plantTabs = document.createElement('div');
+    plantTabs.className = 'plant-tabs';
+    plantTabs.setAttribute('role', 'tablist');
+    plantTabs.setAttribute('aria-label', 'Plant / dataset');
+    figure.appendChild(plantTabs);
 
     const toggle = document.createElement('div');
     toggle.className = 'vcompare-toggle';
@@ -617,19 +625,17 @@
 
     const vRight = document.createElement('video');
     vRight.className = 'vcompare-video vright';
-    vRight.src = `assets/videos/${plant.id}_gt.mp4`;
     vRight.muted = true; vRight.loop = true; vRight.playsInline = true; vRight.preload = 'none';
     vRight.setAttribute('webkit-playsinline', '');
     frame.appendChild(vRight);
 
     const vLeftEls = {};
     let activeLeft = null;
-    const btns = {};
+    const leftBtns = {};
 
     LEFT_OPTIONS.forEach(opt => {
       const v = document.createElement('video');
       v.className = 'vcompare-video vleft';
-      v.src = `assets/videos/${plant.id}_${opt.key}.mp4`;
       v.muted = true; v.loop = true; v.playsInline = true; v.preload = 'none';
       v.setAttribute('webkit-playsinline', '');
       frame.appendChild(v);
@@ -643,13 +649,13 @@
       btn.setAttribute('aria-selected', 'false');
       btn.textContent = opt.label;
       toggle.appendChild(btn);
-      btns[opt.key] = btn;
+      leftBtns[opt.key] = btn;
 
-      // If a video for this plant hasn't been added yet, quietly drop its toggle option.
+      // If the current plant is missing this video, quietly drop its toggle option.
       v.addEventListener('error', () => {
         btn.hidden = true;
-        if (activeLeft === opt.key) selectLeft(LEFT_OPTIONS.map(o => o.key).find(k => !btns[k].hidden));
-      }, { once: true });
+        if (activeLeft === opt.key) selectLeft(LEFT_OPTIONS.map(o => o.key).find(k => !leftBtns[k].hidden));
+      });
     });
 
     const divider = document.createElement('div');
@@ -679,15 +685,14 @@
       vLeftEls[key].currentTime = vRight.currentTime; // resync before revealing
       vLeftEls[key].classList.add('active');
       activeLeft = key;
-      Object.entries(btns).forEach(([k, b]) => {
+      Object.entries(leftBtns).forEach(([k, b]) => {
         b.classList.toggle('active', k === key);
         b.setAttribute('aria-selected', k === key ? 'true' : 'false');
       });
       labelLeft.textContent = LEFT_OPTIONS.find(o => o.key === key).label;
     }
-    selectLeft(LEFT_OPTIONS[0].key);
 
-    Object.entries(btns).forEach(([key, btn]) => {
+    Object.entries(leftBtns).forEach(([key, btn]) => {
       btn.addEventListener('click', () => selectLeft(key));
     });
 
@@ -727,34 +732,74 @@
       if (e.key === 'End')  { setPosition(100); e.preventDefault(); }
     });
 
-    function startWhenReady(){
+    let started = false;
+    function playAll(){
       const all = [vRight, ...Object.values(vLeftEls)];
       all.forEach(v => { v.preload = 'auto'; v.load(); v.play().catch(() => {}); });
-      // Loops drift apart over time (independent decode timing); nudge back in sync periodically.
-      setInterval(() => {
-        const active = vLeftEls[activeLeft];
-        if (Math.abs(active.currentTime - vRight.currentTime) > DRIFT_TOLERANCE){
-          vRight.currentTime = active.currentTime;
-        }
-      }, 1000);
     }
+
+    // Loops drift apart over time (independent decode timing); nudge back in sync periodically.
+    setInterval(() => {
+      if (!started || !activeLeft) return;
+      const active = vLeftEls[activeLeft];
+      if (Math.abs(active.currentTime - vRight.currentTime) > DRIFT_TOLERANCE){
+        vRight.currentTime = active.currentTime;
+      }
+    }, 1000);
+
+    let activePlant = null;
+    function selectPlant(plant){
+      if (plant.id === activePlant) return;
+      activePlant = plant.id;
+      Object.entries(plantBtns).forEach(([id, b]) => {
+        b.classList.toggle('active', id === plant.id);
+        b.setAttribute('aria-selected', id === plant.id ? 'true' : 'false');
+      });
+
+      // Show every source option again; failing ones will re-hide themselves via 'error'.
+      Object.values(leftBtns).forEach(b => b.hidden = false);
+      const keepLeft = activeLeft || LEFT_OPTIONS[0].key;
+      activeLeft = null; // force selectLeft() below to re-apply, even if the key is unchanged
+
+      vRight.src = `assets/videos/${plant.id}_gt.mp4`;
+      LEFT_OPTIONS.forEach(opt => { vLeftEls[opt.key].src = `assets/videos/${plant.id}_${opt.key}.mp4`; });
+      Object.values(vLeftEls).forEach(v => v.classList.remove('active'));
+
+      selectLeft(keepLeft);
+      if (started) playAll();
+    }
+
+    const plantBtns = {};
+    PLANTS.forEach(plant => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'plant-tab';
+      btn.setAttribute('role', 'tab');
+      btn.setAttribute('aria-selected', 'false');
+      btn.textContent = plant.label;
+      btn.addEventListener('click', () => selectPlant(plant));
+      plantTabs.appendChild(btn);
+      plantBtns[plant.id] = btn;
+    });
+
+    selectPlant(PLANTS[0]);
 
     if ('IntersectionObserver' in window){
       const io = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
-          if (entry.isIntersecting){ startWhenReady(); io.disconnect(); }
+          if (entry.isIntersecting){ started = true; playAll(); io.disconnect(); }
         });
       }, { rootMargin: '200px' });
       io.observe(frame);
     } else {
-      startWhenReady();
+      started = true; playAll();
     }
   }
 
-  (function initVCompareAll(){
+  (function initVCompare(){
     const container = document.getElementById('vcompareContainer');
-    if (!container) return;
-    PLANTS.forEach(plant => buildVCompare(container, plant));
+    if (!container || !PLANTS.length) return;
+    buildVCompare(container);
   })();
 </script>
 
