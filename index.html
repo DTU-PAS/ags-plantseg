@@ -464,6 +464,11 @@
       <figcaption>Effect of granularity on per-point leaf/stem segmentation. Ribes 07 prefers the finer granularity (Scale=7); Rose 06 prefers the coarser granularity (Scale=1): no single fixed scale suits both.</figcaption>
     </figure>
 
+    <figure style="margin-top:34px;">
+      <img src="assets/scales_by_species.png" alt="Distribution of AGS-selected granularity scale per species, shown as violin plots">
+      <figcaption>Granularity selected by AGS at inference, per species. The distribution varies widely both within and across species (e.g. Crops3D potato skews toward coarser scales, PLANesT-3D ribes toward finer ones) — no fixed scale would fit all of them.</figcaption>
+    </figure>
+
     <div class="pipeline">
       <div class="pipe-step">
         <div class="pipe-num">1</div>
@@ -522,7 +527,14 @@
 <section id="results">
   <div class="wrap">
     <div class="section-head"><h2>Results</h2></div>
-    <p class="lede">Qualitative results on unseen cross-species datasets, not used during training. Drag each comparison to reveal RGB, PCA features, or the predicted segmentation against ground truth.</p>
+    <p class="lede">Adaptive granularity selection outperforms every fixed-granularity choice, and the granularity it picks varies by species.</p>
+
+    <figure style="margin-top:34px;">
+      <img src="assets/ags_miou_by_scale.png" alt="mIoU vs. fixed granularity per species, compared against AGS-PlantSeg's adaptive selection">
+      <figcaption>mIoU per species at each fixed granularity (1&ndash;7) vs. AGS-PlantSeg's adaptive selection ("Adaptive (ours)"). No single fixed scale is best across species; the adaptive approach matches or exceeds the best fixed choice for every one.</figcaption>
+    </figure>
+
+    <p class="lede" style="margin-top:52px;">Qualitative results on unseen cross-species datasets, not used during training. Drag each comparison to reveal RGB, PCA features, or the predicted segmentation against ground truth.</p>
 
     <div id="vcompareContainer" style="margin-top:34px;"></div>
     <noscript>
@@ -568,6 +580,7 @@
   const PLANTS = [
     { id: 'tomato_crops3d', label: 'Tomato (Crops3D)' },
     { id: 'tomato_pheno4d', label: 'Tomato (Pheno4D)' },
+    { id: 'potato_crops3d', label: 'Potato (Crops3D)' },
   ];
   const LEFT_OPTIONS = [
     { key: 'rgb', label: 'RGB' },
