@@ -423,7 +423,7 @@
     <span class="venue-tag">CVPPA Workshop @ ECCV 2026</span>
 
     <div class="cta-row">
-      <a class="btn" href="#" target="_blank">
+      <a class="btn" href="https://arxiv.org/abs/2608.17803" target="_blank">
         <i class="fa-solid fa-file-pdf"></i> Paper
       </a>
       <a class="btn" href="https://github.com/dtu-pas/ags-plantseg" target="_blank">
@@ -453,12 +453,6 @@
     <div class="section-head"><h2>Abstract</h2></div>
     <div class="abstract-box">
       <p style="text-align:justify;">We introduce <strong style="color:var(--ink)">AGS-PlantSeg</strong>, a few-shot 3D plant organ segmentation method built on a frozen <strong style="color:var(--ink)">Utonia</strong> encoder with a lightweight two-layer MLP head. Rather than committing to a single fixed granularity, our <strong style="color:var(--ink)">Adaptive Granularity Selection (AGS)</strong> module adapts the representation to each plant. During training, AGS selects three granularity levels using prototype-based measures of inter-class separation, intra-class compactness, and class-wise boundary consistency: one level maximizes class discriminability, while two class-specific levels capture boundary consistency. At inference, it selects three levels based on similarity to stored training prototypes and combines their predictions through confidence-weighted aggregation. Trained only on PLANesT-3D and evaluated for cross-species, cross-dataset generalization on Pheno4D and Crops3D, AGS-PlantSeg reaches <strong style="color:var(--ink)">88.9%</strong> average mIoU, outperforming the best fixed-granularity baseline (86.4%) by 2.5 mIoU.</p>
-      <!-- TODO:
-        - Code release: finalize repo and update the "star/watch to be notified" note once published.
-        - Verify all reported numbers (88.9%, 86.4%, +2.5 mIoU) against final paper camera-ready.
-        - Add paper/arXiv link once available.
-        - Add BibTeX citation block.
-      -->
     </div>
 
     <div class="stat-row">
@@ -559,7 +553,10 @@
       title     = {Scale Matters: Adaptive Granularity Selection for Cross-Species 3D Plant Organ Segmentation},
       author    = {Salazar, Carla and Nalpantidis, Lazaros},
       booktitle = {Proceedings of the European Conference on Computer Vision (ECCV) Workshops},
-      year      = {2026}
+      year      = {2026},
+      eprint    = {2608.17803},
+      archivePrefix = {arXiv},
+      primaryClass = {cs.CV}
       }
     </div>
     <button class="copy-btn" onclick="copyBib()">Copy</button>
