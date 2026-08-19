@@ -2,7 +2,7 @@
 
 <p align="center">
   <a href="https://dtu-pas.github.io/ags-plantseg/"><img src="https://img.shields.io/badge/🌐-Project%20Page-green" alt="Project Page"></a>
-  <a href="#"><img src="https://img.shields.io/badge/📄-Paper-b31b1b" alt="Paper"></a>
+  <a href="https://arxiv.org/abs/2608.17803"><img src="https://img.shields.io/badge/📄-arXiv-b31b1b" alt="arXiv"></a>
 </p>
 
 <p align="center">
@@ -35,6 +35,9 @@ If you find this work useful, please cite:
   title     = {Scale Matters: Adaptive Granularity Selection for Cross-Species 3D Plant Organ Segmentation},
   author    = {Salazar, Carla and Nalpantidis, Lazaros},
   booktitle = {Proceedings of the European Conference on Computer Vision (ECCV) Workshops},
-  year      = {2026}
+  year      = {2026},
+  eprint    = {2608.17803},
+  archivePrefix = {arXiv},
+  primaryClass = {cs.CV}
 }
 ```
